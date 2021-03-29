@@ -11,13 +11,6 @@ const perServer = ExpressPeerServer(server, {
 });
 
 app.use("/peerjs", perServer);
-io.on("connection", (socket) => {
-  socket.on("join-room", (roomId, userId) => {
-    socket.join(roomId);
-    socket.to(roomId).broadcast.emit("user-connected", userId);
-  });
-});
-
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static("public"));
@@ -30,4 +23,13 @@ app.get("/:room", (req, res) => {
   res.render("room", { roomId: req.params.room });
 });
 
+io.on("connection", (socket) => {
+  socket.on("join-room", (roomId, userId, userName) => {
+    socket.join(roomId);
+    socket.to(roomId).broadcast.emit("user-connected", userId);
+    socket.on("message", (message) => {
+      io.to(roomId).emit("createMessage", message, userName);
+    });
+  });
+});
 server.listen(3030);

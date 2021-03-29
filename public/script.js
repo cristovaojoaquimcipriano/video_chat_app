@@ -76,12 +76,14 @@ let messages = document.querySelector(".messages");
 
 send.addEventListener("click", (e) => {
   if (text.value.length !== 0) {
+    console.log("Gotsa");
     socket.emit("message", text.value);
     text.value = "";
   }
 });
 
 text.addEventListener("keydown", (e) => {
+  console.log("Gotsa");
   if (e.key === "Enter" && text.value.length !== 0) {
     socket.emit("message", text.value);
     text.value = "";
